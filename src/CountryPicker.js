@@ -11,7 +11,7 @@ import {
   Modal,
   Text,
   TextInput,
-  ListView,
+  FlatList,
   ScrollView,
   Platform
 } from 'react-native'
@@ -41,8 +41,6 @@ if (isEmojiable) {
 
 export const getAllCountries = () =>
   cca2List.map(cca2 => ({ ...countries[cca2], cca2 }))
-
-const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
 
 export default class CountryPicker extends Component {
   static propTypes = {
@@ -133,7 +131,6 @@ export default class CountryPicker extends Component {
     this.state = {
       modalVisible: false,
       cca2List: countryList,
-      dataSource: ds.cloneWithRows(countryList),
       filter: '',
       letters: this.getLetters(countryList)
     }
@@ -175,7 +172,7 @@ export default class CountryPicker extends Component {
     if (nextProps.countryList !== this.props.countryList) {
       this.setState({
         cca2List: nextProps.countryList,
-        dataSource: ds.cloneWithRows(nextProps.countryList)
+        countryList: nextProps.countryList,
       })
     }
   }
@@ -184,7 +181,7 @@ export default class CountryPicker extends Component {
     this.setState({
       modalVisible: false,
       filter: '',
-      dataSource: ds.cloneWithRows(this.state.cca2List)
+      countryList: this.state.cca2List
     })
 
     this.props.onChange({
@@ -199,7 +196,7 @@ export default class CountryPicker extends Component {
     this.setState({
       modalVisible: false,
       filter: '',
-      dataSource: ds.cloneWithRows(this.state.cca2List)
+      countryList: this.state.cca2List
     })
     if (this.props.onClose) {
       this.props.onClose()
@@ -268,7 +265,7 @@ export default class CountryPicker extends Component {
 
     this.setState({
       filter: value,
-      dataSource: ds.cloneWithRows(filteredCountries)
+      countryList: filteredCountries,
     })
   }
 
@@ -361,17 +358,9 @@ export default class CountryPicker extends Component {
             </View>
             <KeyboardAvoidingView behavior="padding">
               <View style={styles.contentContainer}>
-                <ListView
-                  keyboardShouldPersistTaps="always"
-                  enableEmptySections
-                  ref={listView => (this._listView = listView)}
-                  dataSource={this.state.dataSource}
-                  renderRow={country => this.renderCountry(country)}
-                  initialListSize={30}
-                  pageSize={15}
-                  onLayout={({ nativeEvent: { layout: { y: offset } } }) =>
-                    this.setVisibleListHeight(offset)
-                  }
+                <FlatList
+                  data={this.state.countryList}
+                  renderItem={({item}) => this.renderCountry(item)}
                 />
                 <ScrollView
                   contentContainerStyle={styles.letters}
