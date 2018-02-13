@@ -131,6 +131,7 @@ export default class CountryPicker extends Component {
     this.state = {
       modalVisible: false,
       cca2List: countryList,
+      countryList: countryList,
       filter: '',
       letters: this.getLetters(countryList)
     }
