@@ -360,8 +360,10 @@ export default class CountryPicker extends Component {
             <KeyboardAvoidingView behavior="padding">
               <View style={styles.contentContainer}>
                 <FlatList
+                  ref={listView => (this._listView = listView)}
                   data={this.state.countryList}
                   renderItem={({item}) => this.renderCountry(item)}
+                  keyExtractor={(item, index) => index}
                 />
                 <ScrollView
                   contentContainerStyle={styles.letters}
